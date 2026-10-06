@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barbie's Communication Academy</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Trebuchet MS",Arial,sans-serif;background:linear-gradient(135deg,#fff4fb,#f7efff);color:#4b3450}
+.app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
+.card{width:min(1050px,100%);min-height:680px;background:rgba(255,255,255,.94);border-radius:30px;box-shadow:0 18px 50px rgba(120,70,130,.18);overflow:hidden;position:relative}
+.top{padding:18px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0d9ee;background:#fffafd}
+.logo{font-weight:800;font-size:18px;color:#c34c96}
+.controls button,.nav button{border:0;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer;background:#f8d8ee;color:#71365f}
+.controls button:hover,.nav button:hover{transform:translateY(-1px)}
+.progress{height:7px;background:#f3e3f2}.bar{height:100%;background:linear-gradient(90deg,#e86eb5,#a98ce9);width:10%;transition:.3s}
+.screen{display:none;padding:34px 42px 30px;min-height:610px}.screen.active{display:block}
+h1{font-size:clamp(34px,6vw,62px);margin:5px 0 10px;color:#b73f8b;line-height:1.03}
+h2{font-size:32px;margin:8px 0 14px;color:#a83e83}
+h3{color:#9a477f}
+p{font-size:18px;line-height:1.55}
+.subtitle{font-size:22px}
+.center{text-align:center}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
+.character{height:330px;position:relative;display:flex;align-items:center;justify-content:center}
+.doll{width:205px;height:255px;position:relative}
+.head{width:115px;height:115px;border-radius:50%;background:#f5c6aa;margin:auto;position:relative;z-index:2;border:3px solid #b86a77}
+.hair{position:absolute;left:23px;top:-15px;width:160px;height:160px;border-radius:50% 50% 45% 45%;background:#8b573e;z-index:1}
+.eye{position:absolute;top:50px;width:10px;height:14px;background:#49333b;border-radius:50%}.eye.l{left:32px}.eye.r{right:32px}
+.smile{position:absolute;left:43px;top:78px;width:30px;height:14px;border-bottom:4px solid #a64c62;border-radius:50%}
+.body{width:125px;height:105px;background:#e65ba8;margin:-2px auto 0;border-radius:35px 35px 15px 15px;position:relative;z-index:2}
+.arm{position:absolute;width:22px;height:90px;background:#f5c6aa;border-radius:20px;top:120px}.arm.l{left:13px;transform:rotate(18deg)}.arm.r{right:13px;transform:rotate(-18deg)}
+.leg{width:24px;height:80px;background:#f5c6aa;position:absolute;top:205px;border-radius:20px}.leg.l{left:72px}.leg.r{right:72px}
+.badge{display:inline-block;background:#f8d8ee;color:#8c3d77;padding:7px 12px;border-radius:999px;font-weight:800;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:20px}
+.info{background:#fff7fc;border:1px solid #f1d5e9;border-radius:20px;padding:18px}
+.icon{font-size:32px}
+.adab-list{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px}
+.adab{background:#fff8fc;border:1px solid #efd5e9;border-radius:18px;padding:16px;text-align:center;min-height:160px}
+.situation{background:#fff8fc;border-radius:25px;padding:24px;margin:20px 0;border:1px solid #f0d8ea}
+.character-small{font-size:72px;text-align:center;margin:5px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.option{border:2px solid #ead0e4;background:white;border-radius:16px;padding:16px;font-size:17px;font-weight:700;cursor:pointer;text-align:left}
+.option:hover{border-color:#d55aa2;background:#fff3fa}
+.feedback{min-height:48px;margin-top:14px;padding:12px;border-radius:14px;font-weight:700;display:none}
+.good{background:#e8f8ee;color:#237246}.bad{background:#fff0f0;color:#a33c3c}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.match button{border:2px solid #e9d2e5;background:#fff;border-radius:14px;padding:15px;cursor:pointer;font-weight:700}
+.match button.selected{border-color:#b96ca3;background:#fff0f8}
+.match button.done{opacity:.65}
+.quizbox{background:#fff8fc;border-radius:22px;padding:25px;border:1px solid #efd7e9}
+.score{font-size:30px;color:#b73f8b;font-weight:800}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:24px}
+.primary{background:linear-gradient(90deg,#e85fae,#a886e8)!important;color:white!important;padding:14px 24px!important}
+.tip{font-size:14px;color:#80677e}
+.lilac{background:#f3edff}
+@media(max-width:760px){
+ .hero{grid-template-columns:1fr}.character{height:270px}.adab-list{grid-template-columns:1fr 1fr}.grid,.options,.match{grid-template-columns:1fr}.screen{padding:25px 20px}.card{min-height:100vh;border-radius:20px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="card">
+<div class="top">
+<div class="logo">🎀 Barbie's Communication Academy</div>
+<div class="controls">
+<button onclick="toggleMusic()" id="musicBtn">🎵 Muzik</button>
+<button onclick="speakCurrent()">🔊 Audio</button>
+</div>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<section class="screen active" data-title="Selamat Datang">
+<div class="hero">
+<div>
+<span class="badge">PENDIDIKAN ISLAM • TAHUN 4</span>
+<h1>Adab<br>Berkomunikasi</h1>
+<p class="subtitle">Jom belajar cara bercakap, mendengar dan berinteraksi dengan adab yang baik bersama Barbie!</p>
+<button class="primary" onclick="go(2)">MULA BELAJAR ✨</button>
+<p class="tip">Sesuai untuk gaya visual, auditori dan kinestetik.</p>
+</div>
+<div class="character" aria-label="Watak Barbie bergaya kartun">
+<div class="doll"><div class="hair"></div><div class="head"><div class="eye l"></div><div class="eye r"></div><div class="smile"></div></div><div class="body"></div><div class="arm l"></div><div class="arm r"></div><div class="leg l"></div><div class="leg r"></div></div>
+</div>
+</div>
+<div class="nav"><span></span><button onclick="go(2)">Seterusnya →</button></div>
+</section>
+
+<section class="screen" data-title="Objektif">
+<h2>🎯 Misi Kita Hari Ini</h2>
+<p>Selepas meneroka akademi ini, kamu boleh:</p>
+<div class="grid">
+<div class="info"><div class="icon">💬</div><b>1. Faham</b><p>Menjelaskan maksud adab berkomunikasi.</p></div>
+<div class="info"><div class="icon">👂</div><b>2. Kenal pasti</b><p>Mengenal pasti adab ketika bercakap dan mendengar.</p></div>
+<div class="info"><div class="icon">🤝</div><b>3. Bezakan</b><p>Membezakan perlakuan beradab dan tidak beradab.</p></div>
+<div class="info"><div class="icon">⭐</div><b>4. Amalkan</b><p>Mengaplikasikan adab komunikasi dalam kehidupan harian.</p></div>
+</div>
+<div class="nav"><button onclick="go(1)">← Kembali</button><button onclick="go(3)">Belajar →</button></div>
+</section>
+
+<section class="screen" data-title="Maksud Adab">
+<h2>💗 Apa Itu Adab Berkomunikasi?</h2>
+<div class="info lilac">
+<p><b>Adab berkomunikasi</b> ialah cara kita bercakap, mendengar dan berinteraksi dengan orang lain secara sopan, hormat dan menjaga perasaan.</p>
+</div>
+<div class="grid">
+<div class="info"><span class="icon">🗣️</span><h3>Bercakap baik</h3><p>Gunakan perkataan yang sopan dan tidak menyakiti hati.</p></div>
+<div class="info"><span class="icon">👂</span><h3>Mendengar</h3><p>Berikan perhatian apabila orang lain sedang bercakap.</p></div>
+</div>
+<p class="tip">💡 Ingat: komunikasi yang baik membuat orang lain berasa dihargai.</p>
+<div class="nav"><button onclick="go(2)">← Kembali</button><button onclick="go(4)">Kenali Adab →</button></div>
+</section>
+
+<section class="screen" data-title="Lima Adab">
+<h2>🌷 5 Adab Komunikasi</h2>
+<div class="adab-list">
+<div class="adab"><div class="icon">👋</div><b>1. Beri salam</b><p>Sapa dengan baik.</p></div>
+<div class="adab"><div class="icon">😊</div><b>2. Bercakap sopan</b><p>Gunakan bahasa baik.</p></div>
+<div class="adab"><div class="icon">👂</div><b>3. Mendengar</b><p>Berikan perhatian.</p></div>
+<div class="adab"><div class="icon">🙋</div><b>4. Tidak memotong</b><p>Tunggu giliran bercakap.</p></div>
+<div class="adab"><div class="icon">💞</div><b>5. Tidak mengejek</b><p>Jaga perasaan orang lain.</p></div>
+</div>
+<div class="nav"><button onclick="go(3)">← Kembali</button><button onclick="go(5)">Cuba Situasi →</button></div>
+</section>
+
+<section class="screen" data-title="Situasi 1">
+<h2>🎭 Situasi 1: Bertemu Kawan</h2>
+<div class="situation">
+<div class="character-small">👧🏻 👧🏻</div>
+<p class="center"><b>Barbie bertemu rakannya pada waktu pagi.</b><br>Apakah tindakan yang paling beradab?</p>
+<div class="options">
+<button class="option" onclick="answer(this,true,'Syabas! Memberi salam ialah cara yang baik untuk memulakan komunikasi.')">A. 👋 Memberi salam</button>
+<button class="option" onclick="answer(this,false,'Cuba lagi. Menjerit bukan cara berkomunikasi yang sopan.')">B. 📢 Menjerit</button>
+<button class="option" onclick="answer(this,false,'Cuba lagi. Kita sepatutnya menyapa orang lain dengan baik.')">C. 🚶 Berpaling tanpa menyapa</button>
+<button class="option" onclick="answer(this,false,'Cuba lagi. Mengejek boleh menyakiti perasaan orang lain.')">D. 😝 Mengejek</button>
+</div>
+<div id="fb5" class="feedback"></div>
+</div>
+<div class="nav"><button onclick="go(4)">← Kembali</button><button onclick="go(6)">Situasi 2 →</button></div>
+</section>
+
+<section class="screen" data-title="Situasi 2">
+<h2>🎭 Situasi 2: Kawan Sedang Bercakap</h2>
+<div class="situation">
+<div class="character-small">👧🏻 💬 👦🏻</div>
+<p class="center"><b>Ali sedang berkongsi cerita dengan Barbie.</b><br>Apakah tindakan yang menunjukkan adab?</p>
+<div class="options">
+<button class="option" onclick="answer(this,false,'Cuba lagi. Kita perlu memberi perhatian kepada orang yang sedang bercakap.')">A. 📱 Bermain telefon</button>
+<button class="option" onclick="answer(this,true,'Hebat! Mendengar dengan baik menunjukkan kita menghormati orang lain.')">B. 👂 Mendengar dengan baik</button>
+<button class="option" onclick="answer(this,false,'Cuba lagi. Menjerit boleh mengganggu komunikasi.')">C. 📢 Menjerit</button>
+<button class="option" onclick="answer(this,false,'Cuba lagi. Memotong percakapan bukan adab yang baik.')">D. 🙅 Memotong percakapan</button>
+</div>
+<div id="fb6" class="feedback"></div>
+</div>
+<div class="nav"><button onclick="go(5)">← Kembali</button><button onclick="go(7)">Aktiviti →</button></div>
+</section>
+
+<section class="screen" data-title="Padanan">
+<h2>🧩 Aktiviti Padanan</h2>
+<p>Pilih <b>perlakuan</b>, kemudian pilih adab yang sesuai.</p>
+<div class="match" id="matchArea">
+<button onclick="pickLeft(0,this)">👋 Memberi salam</button><button onclick="pickRight(0,this)">Menyapa dengan baik</button>
+<button onclick="pickLeft(1,this)">👂 Mendengar</button><button onclick="pickRight(1,this)">Memberi perhatian</button>
+<button onclick="pickLeft(2,this)">🙋 Tunggu giliran</button><button onclick="pickRight(2,this)">Tidak memotong percakapan</button>
+<button onclick="pickLeft(3,this)">💞 Tidak mengejek</button><button onclick="pickRight(3,this)">Menjaga perasaan orang lain</button>
+</div>
+<div id="matchFeedback" class="feedback"></div>
+<div class="nav"><button onclick="go(6)">← Kembali</button><button onclick="go(8)">Betul atau Tidak →</button></div>
+</section>
+
+<section class="screen" data-title="Betul atau Tidak">
+<h2>🔎 Betul atau Tidak?</h2>
+<p id="tfQuestion">Sara mendengar rakannya bercakap tanpa memotong percakapan.</p>
+<div class="options">
+<button class="option" onclick="tf(true)">✅ BERADAB</button>
+<button class="option" onclick="tf(false)">❌ TIDAK BERADAB</button>
+</div>
+<div id="tfFeedback" class="feedback"></div>
+<div class="nav"><button onclick="go(7)">← Kembali</button><button onclick="go(9)">Kuiz Akhir →</button></div>
+</section>
+
+<section class="screen" data-title="Kuiz">
+<h2>🏆 Kuiz Akhir</h2>
+<div class="quizbox">
+<div class="score" id="scoreText">Soalan 1 / 5</div>
+<p id="qText"></p>
+<div class="options" id="qOptions"></div>
+<div id="qFeedback" class="feedback"></div>
+</div>
+<div class="nav"><button onclick="go(8)">← Kembali</button><button onclick="nextQuiz()" id="nextQuiz">Seterusnya →</button></div>
+</section>
+
+<section class="screen" data-title="Tamat">
+<div class="center">
+<div style="font-size:80px">🎀🏆🎀</div>
+<h1>Tahniah!</h1>
+<p class="subtitle">Kamu telah menamatkan <b>Barbie's Communication Academy</b>.</p>
+<div class="info">
+<p class="score" id="finalScore">Skor kamu: 0/5</p>
+<p id="finalMessage"></p>
+</div>
+<p>🌸 Terus amalkan adab berkomunikasi dalam kehidupan seharian.</p>
+<button class="primary" onclick="go(1)">🔄 Main Semula</button>
+<button onclick="go(4)" style="margin-left:8px;border:0;border-radius:999px;padding:14px 20px;background:#f8d8ee;color:#71365f;font-weight:700">📚 Ulang Kaji</button>
+</div>
+</section>
+
+</div>
+</div>
+
+<script>
+let current=1, music=false, audioCtx=null;
+const screens=[...document.querySelectorAll('.screen')];
+function go(n){
+ current=n;
+ screens.forEach((s,i)=>s.classList.toggle('active',i===n-1));
+ document.getElementById('bar').style.width=(n/screens.length*100)+'%';
+ window.scrollTo({top:0,behavior:'smooth'});
+ if(n===9) loadQuiz();
+ if(n===10) finish();
+}
+function speak(text){
+ if(!('speechSynthesis' in window)){alert('Fungsi suara tidak disokong oleh browser ini.');return}
+ speechSynthesis.cancel();
+ let u=new SpeechSynthesisUtterance(text);
+ u.lang='ms-MY';u.rate=.9;u.pitch=1.08;
+ speechSynthesis.speak(u);
+}
+function speakCurrent(){
+ const s=screens[current-1];
+ const text=s.innerText.replace(/\s+/g,' ').slice(0,650);
+ speak(text);
+}
+function toggleMusic(){
+ music=!music;
+ document.getElementById('musicBtn').textContent=music?'🔇 Henti Muzik':'🎵 Muzik';
+ if(music) startMusic(); else stopMusic();
+}
+function startMusic(){
+ try{
+ audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+ let o=audioCtx.createOscillator(),g=audioCtx.createGain();
+ o.type='sine';o.frequency.value=523.25;g.gain.value=.018;o.connect(g);g.connect(audioCtx.destination);o.start();
+ window.musicOsc=o;window.musicGain=g;
+ }catch(e){}
+}
+function stopMusic(){try{if(window.musicOsc)window.musicOsc.stop();if(audioCtx)audioCtx.close()}catch(e){}}
+function ping(){
+ try{let c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=720;g.gain.value=.06;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.12)}catch(e){}
+}
+function answer(btn,correct,msg){
+ const id='fb'+current,fb=document.getElementById(id);
+ fb.style.display='block';fb.className='feedback '+(correct?'good':'bad');fb.textContent=msg;
+ if(correct) ping();
+ document.querySelectorAll('.option').forEach(b=>b.style.opacity='.75');btn.style.opacity='1';
+}
+let left=null,right=null;
+function pickLeft(i,b){left=i;document.querySelectorAll('#matchArea button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');checkMatch()}
+function pickRight(i,b){right=i;b.classList.add('selected');checkMatch()}
+function checkMatch(){
+ if(left===null||right===null)return;
+ const f=document.getElementById('matchFeedback');
+ f.style.display='block';
+ if(left===right){f.className='feedback good';f.textContent='Betul! Padanan tepat 🌟';document.querySelectorAll('#matchArea button').forEach(b=>b.classList.remove('selected'));left=right=null;ping()}
+ else{f.className='feedback bad';f.textContent='Belum tepat. Cuba fikirkan semula. 💗';setTimeout(()=>{document.querySelectorAll('#matchArea button').forEach(b=>b.classList.remove('selected'));left=right=null},500)}
+}
+function tf(correct){
+ const f=document.getElementById('tfFeedback');f.style.display='block';
+ if(correct){f.className='feedback good';f.textContent='Betul! Mendengar tanpa memotong percakapan ialah adab yang baik.';ping()}
+ else{f.className='feedback bad';f.textContent='Cuba lagi. Perbuatan tersebut menunjukkan adab.'}
+}
+const questions=[
+['Apakah cara yang baik ketika bertemu seseorang?',['Memberi salam','Menjerit','Mengejek','Berpaling'],0],
+['Apakah tindakan ketika orang lain bercakap?',['Memotong percakapan','Mendengar dengan baik','Bermain','Menjerit'],1],
+['Mengapa kita tidak boleh mengejek orang lain?',['Supaya kita menang','Untuk menghiburkan diri','Kerana boleh menyakiti perasaan','Supaya bercakap kuat'],2],
+['Apakah bahasa yang sesuai digunakan?',['Kasar','Sopan','Menghina','Mengejek'],1],
+['Apakah sikap yang menunjukkan kita menghormati orang lain?',['Tidak mendengar','Bercakap serentak','Menunggu giliran bercakap','Menjerit'],2]
+];
+let qi=0,score=0,answered=false;
+function loadQuiz(){qi=0;score=0;answered=false;renderQ()}
+function renderQ(){
+ const q=questions[qi];document.getElementById('scoreText').textContent=`Soalan ${qi+1} / ${questions.length}`;
+ document.getElementById('qText').textContent=q[0];
+ const box=document.getElementById('qOptions');box.innerHTML='';
+ q[1].forEach((x,i)=>{let b=document.createElement('button');b.className='option';b.textContent=String.fromCharCode(65+i)+'. '+x;b.onclick=()=>quizAnswer(i,b);box.appendChild(b)});
+ const f=document.getElementById('qFeedback');f.style.display='none';answered=false;
+ document.getElementById('nextQuiz').textContent=qi===questions.length-1?'Lihat Keputusan →':'Seterusnya →';
+}
+function quizAnswer(i,b){
+ if(answered)return;answered=true;
+ const q=questions[qi],f=document.getElementById('qFeedback');f.style.display='block';
+ if(i===q[2]){score++;f.className='feedback good';f.textContent='🎉 Betul! Hebat!';ping()}else{f.className='feedback bad';f.textContent='💗 Belum tepat. Jawapan yang betul ialah: '+q[1][q[2]]}
+}
+function nextQuiz(){
+ if(!answered){document.getElementById('qFeedback').style.display='block';document.getElementById('qFeedback').className='feedback bad';document.getElementById('qFeedback').textContent='Pilih satu jawapan dahulu 😊';return}
+ if(qi<questions.length-1){qi++;renderQ()}else go(10);
+}
+function finish(){
+ document.getElementById('finalScore').textContent=`Skor kamu: ${score}/${questions.length}`;
+ document.getElementById('finalMessage').textContent=score>=4?'🌟 Cemerlang! Kamu sudah memahami adab berkomunikasi.':score>=3?'👏 Bagus! Teruskan ulang kaji untuk menjadi lebih hebat.':'💗 Tidak mengapa. Ulang kaji semula dan cuba lagi!';
+}
+</script>
+</body>
+</html>
